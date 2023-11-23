@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[97]:
+# In[18]:
 
 
 import numpy as np
@@ -10,6 +10,8 @@ import random
 import math
 import random
 import pandas as pd
+import datetime as dt
+import os
 
 class NeuralNetwork:
     def __init__(self, input_size, hidden_sizes, output_size):
@@ -111,7 +113,7 @@ nn_size = len(NeuralNetwork(input_size, hidden_sizes, output_size).to_list())
 print(nn_size)
 
 
-# In[98]:
+# In[19]:
 
 
 ########### CLASSE DO INDIVÍDUO ###########
@@ -176,7 +178,7 @@ class Individuo:
 ########### CLASSE DO INDIVÍDUO ###########
 
 
-# In[99]:
+# In[20]:
 
 
 ########### FUNÇÕES PARA O CÓDIGO PRINCIPAL ###########
@@ -220,11 +222,18 @@ def recombinacao(individuos_pais):
 ########### FUNÇÕES PARA O CÓDIGO PRINCIPAL ###########
 
 
-# In[100]:
+# In[21]:
 
 
 ########### CÓDIGO PRINCIPAL ###########
-
+def save_results(file_path,resultado):
+    # Open the file in binary write mode
+    with open(file_path, 'wb') as file:
+        # Use pickle.dump to save the variable to the file
+        pickle.dump(resultado, file)
+    
+    print(f"Variable saved to {file_path}")
+    
 def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilidade_de_mutacao,chance_de_novo_gene,imprimir_resultados):
     # parâmetros iniciais
     #n -> quantidade de entradas da função
@@ -234,7 +243,8 @@ def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilida
     #taxa_de_selecao -> porcentagem da população que é selecionada para se reproduzir 
     #probabilidade_de_mutacao -> chance de ocorrer mutação em cada indivíduo por geração
     #chance_de_novo_gene -> caso haja mutação essa é a chance de surgir um gene totalmente novo
-
+    folder_path = r'results\\' + dt.datetime.now().strftime('%d-%m-%Y %Hh%M')
+    os.mkdir(folder_path)
     # geração de população inicial, o cálculo da fitness de cada indivíduo já é realizado na geração
     populacao = gerar_populacao(npop,intervalo_genoma,n)
     populacao.sort(key=lambda x: x.fitness, reverse=False) #ordena a população dos melhores indivíduos para os piores
@@ -329,7 +339,9 @@ def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilida
         estatisticas = pd.concat([estatisticas,new_row],ignore_index=True)
 
         print('Geração ',i,'. Melhor fitness: ', round(melhor_fitness,3))
-
+        
+        save_results(folder_path+"\\"+"resultados_"+str(i)+".pkl",melhor_individuo)
+        
         if round(melhor_fitness_global,3) == 100:
             break
     # FIM DO LOOP PRINCIPAL
@@ -348,7 +360,6 @@ def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilida
         #    print(individuo)
 
         # IMPRIME AS ESTATÍSTICAS
-        get_ipython().run_line_magic('matplotlib', 'inline')
         import matplotlib as plt
 
         plt.style.use('seaborn-v0_8')
@@ -363,16 +374,16 @@ def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilida
         ax.set_title(string_titulo)
         # salvar a figura
         fig = ax.get_figure()
-        fig.savefig(r'results\\' + str(n) + '-' + str(npop) + '-' + str(max_gen) + '-' + str(taxa_de_selecao) + '-' + str(probabilidade_de_mutacao)+ '.png', dpi=100)
+        fig.savefig(r'results\\' + dt.datetime.now().strftime('%d-%m-%Y %Hh%M') + str(n) + '-' + str(npop) + '-' + str(max_gen) + '-' + str(taxa_de_selecao) + '-' + str(probabilidade_de_mutacao)+ '.png', dpi=100)
     return populacao,[i,media_fitness,melhor_fitness_global]
     ########### CÓDIGO PRINCIPAL ###########
 
 
-# In[101]:
+# In[22]:
 
 
 print("-----------------------------------------Execução 1-----------------------------------------")
-resultado,stats = rodar_otimizacao(nn_size,2500,5000,[-25,25],0.30,0.20,0.20,True)
+resultado,stats = rodar_otimizacao(nn_size,2500,5000,[-50,50],0.30,0.20,0.20,True)
 # parâmetros iniciais
 #n -> quantidade de entradas da função
 #npop -> tamanho da população
@@ -385,17 +396,10 @@ resultado,stats = rodar_otimizacao(nn_size,2500,5000,[-25,25],0.30,0.20,0.20,Tru
 # geração de população inicial, o cálculo da fitness de cada indivíduo já é realizado na geração
 
 # Specify a file to save the variable
-file_path = r'results\results.pkl'
-
-# Open the file in binary write mode
-with open(file_path, 'wb') as file:
-    # Use pickle.dump to save the variable to the file
-    pickle.dump(resultado, file)
-
-print(f"Variable saved to {file_path}")
 
 
-# In[102]:
+
+# In[ ]:
 
 
 import matplotlib.pyplot as plt
@@ -425,7 +429,7 @@ plt.legend()
 plt.show()
 
 
-# In[104]:
+# In[ ]:
 
 
 
