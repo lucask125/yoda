@@ -383,7 +383,7 @@ def rodar_otimizacao(n,npop,max_gen,intervalo_genoma,taxa_de_selecao,probabilida
 
 
 print("-----------------------------------------Execução 1-----------------------------------------")
-resultado,stats = rodar_otimizacao(nn_size,2500,5000,[-50,50],0.30,0.20,0.20,True)
+resultado,stats = rodar_otimizacao(nn_size,2500,5000,[-5,5],0.35,0.25,0.25,True)
 # parâmetros iniciais
 #n -> quantidade de entradas da função
 #npop -> tamanho da população
